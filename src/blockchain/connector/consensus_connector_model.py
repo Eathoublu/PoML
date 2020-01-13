@@ -1,7 +1,16 @@
 from abc import abstractmethod
 
+from ..consensus_peer import ConsensusPeer
 
-class ConnectorModel:
+
+class ConsensusConnectorModel:
+    """
+    this abstract class define the method of the connector
+    
+    """
+
+    def __init__(self, peer: ConsensusPeer):
+        self.peer = peer
 
     @abstractmethod
     def broadcast(self, data, target: list):
