@@ -1,3 +1,5 @@
 from peewee import *
 
-db = SqliteDatabase('database.db')
+from src.config import *
+
+db = SqliteDatabase(DATABASE_URI)

@@ -1,8 +1,15 @@
 from .consesus_model import ConsensusModel
 from ..connector import consensus_connector_model
+from ..persistence.data_model import BlockChain
+
+DEFINE_DIFFICULTY = 1
+DEFINE_OUTPUT_PERIOD = 30
+DEFINE_PREVIEW_BLOCK = 100
+MAX_TARGET_VALUE = 0x00000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 
 
 class CustomPow(ConsensusModel):
+    current_difficulty = DEFINE_DIFFICULTY
 
     def __init__(self, connector: consensus_connector_model):
         super().__init__(connector)
@@ -20,4 +27,17 @@ class CustomPow(ConsensusModel):
         pass
 
     def calculate_difficulty(self):
-        pass
+        query = BlockChain.select().order_by(BlockChain.block_height.desc()).limit(DEFINE_PREVIEW_BLOCK)
+
+        if len(query) < DEFINE_PREVIEW_BLOCK:
+            return DEFINE_DIFFICULTY
+
+        new_block = query[0]
+        old_block = query[len(query) - 1]
+
+        period = new_block.create_time - old_block.create_time
+
+        self.current_difficulty = self.current_difficulty * (period / DEFINE_OUTPUT_PERIOD)
+
+    def calculate_target_value(self):
+        return MAX_TARGET_VALUE / self.current_difficulty
