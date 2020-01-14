@@ -9,3 +9,9 @@ class RPCServer(ConsensusServicer):
 
     def Upload_batch(self, request, context):
         pass
+
+    def Train(self, request, context):
+        pass
+
+    def Fetch_training_result(self, request, context):
+        pass

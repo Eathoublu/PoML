@@ -1,6 +1,6 @@
 from abc import abstractmethod
 
-from ..consensus_peer import ConsensusPeer
+from src.blockchain.peer.consensus_peer import ConsensusPeer
 
 
 class ConsensusConnectorModel:

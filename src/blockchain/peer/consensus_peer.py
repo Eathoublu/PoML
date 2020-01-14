@@ -1,5 +1,5 @@
-from .connector.consensus_connector_model import ConsensusConnectorModel
-from .consesus.consesus_model import ConsensusModel
+from src.blockchain.connector.consensus_connector_model import ConsensusConnectorModel
+from src.blockchain.consesus.consesus_model import ConsensusModel
 
 
 class ConsensusPeer:
@@ -12,5 +12,8 @@ class ConsensusPeer:
     def broadcast(self, data):
         self.connector.broadcast(data, self.peer_list)
 
-    def handle_customer_request(self, data):
+    def handle_training_request(self, data):
+        pass
+
+    def handle_upload_request(self, data):
         pass
