@@ -1,6 +1,7 @@
 from .consesus_model import ConsensusModel
 from ..connector import consensus_connector_model
 from ..persistence.data_model import BlockChain
+from ...util.hash import sha256str
 
 DEFINE_DIFFICULTY = 1
 DEFINE_OUTPUT_PERIOD = 30
@@ -23,8 +24,8 @@ class CustomPow(ConsensusModel):
     def make_consensus(self, data):
         pass
 
-    def make_block(self):
-        pass
+    def make_block(self, data):
+        body = sha256str(sha256str(data))
 
     def calculate_difficulty(self):
         query = BlockChain.select().order_by(BlockChain.block_height.desc()).limit(DEFINE_PREVIEW_BLOCK)
@@ -41,3 +42,10 @@ class CustomPow(ConsensusModel):
 
     def calculate_target_value(self):
         return MAX_TARGET_VALUE / self.current_difficulty
+
+
+class Block:
+
+    def __init__(self, previous_hash, data):
+        self.body_hash = sha256str(sha256str(data))
+        self.previous_hash = previous_hash

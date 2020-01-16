@@ -1,9 +1,9 @@
 import hashlib
 
 
-def hash256(data: bytes) -> str:
+def sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
-def hash256str(data: str) -> str:
-    return hash256(bytes(data, encoding='utf-8'))
+def sha256str(data: str) -> str:
+    return sha256(bytes(data, encoding='utf-8'))
