@@ -16,4 +16,4 @@ class ConsensusPeer:
         pass
 
     def handle_upload_request(self, data):
-        pass
+        self.consensus.make_consensus(data)

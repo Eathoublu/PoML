@@ -8,7 +8,7 @@ class RPCServer(ConsensusServicer):
         self.connector = connector
 
     def Upload_batch(self, request, context):
-        pass
+        self.connector.handle_upload_request(4)
 
     def Train(self, request, context):
         pass

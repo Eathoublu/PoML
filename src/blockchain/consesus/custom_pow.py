@@ -1,11 +1,11 @@
 import json
+import random
 import time
 
-from src.blockchain.persistence.database import query_latest_block
+from src.blockchain.persistence.database import query_latest_block, BlockChain
 from src.error.blockchain import DatabaseException
 from .consesus_model import ConsensusModel
 from ..connector import consensus_connector_model
-from ..persistence.data_model import BlockChain
 from ...util.hash import sha256str
 
 DEFINE_DIFFICULTY = 1
@@ -23,13 +23,26 @@ class CustomPow(ConsensusModel):
     def handle_block(self, block):
         pass
 
-    def verify_block(self, block):
-        pass
-
     def make_consensus(self, data):
-        pass
+        """
+        This method is used to make a consensus using pow algorithm.
+        This method will take for a long time.
+        :param data: the data which will be shared
+        :return: the block that shared successfully
+        """
+        while True:
+            block = self.make_block(data)
+            header_hash = block.get_herder_hash(random.random())
+            if header_hash < self.calculate_target_value():
+                return block
 
-    def make_block(self, data):
+    @staticmethod
+    def make_block(data):
+        """
+        Make a block with pow data structure.
+        :param data: the body
+        :return: the block
+        """
         body = sha256str(data)
         block = query_latest_block()
         if block is None:
@@ -39,10 +52,14 @@ class CustomPow(ConsensusModel):
         previous_hash = block.previous_hash
         create_time = int(time.time() * 1000)
 
-        block = Block(previous_hash, data, block_height, create_time)
-        pass
+        return Block(previous_hash, body, block_height, create_time)
 
     def calculate_difficulty(self):
+        """
+        Calculate the difficulty of mining.
+
+        :return:
+        """
         query = BlockChain.select().order_by(BlockChain.block_height.desc()).limit(DEFINE_PREVIEW_BLOCK)
 
         if len(query) < DEFINE_PREVIEW_BLOCK:
@@ -56,24 +73,51 @@ class CustomPow(ConsensusModel):
         self.current_difficulty = self.current_difficulty * (period / DEFINE_OUTPUT_PERIOD)
 
     def calculate_target_value(self):
+        """
+        Calculate the target value that is used to check whether the block is valid.
+        :return:
+        """
+        self.calculate_difficulty()
         return MAX_TARGET_VALUE / self.current_difficulty
 
 
 class Block:
+    """
+    The data structure for pow algorithm
+    """
 
-    def __init__(self, previous_hash, data, height, time):
-        self.body_hash = sha256str(data)
+    def __init__(self, previous_hash, data, height, create_time):
+        self.body = data
         self.previous_hash = previous_hash
         self.height = height
-        self.time = time
+        self.create_time = create_time
 
     def get_header(self):
         return {
-            'body_hash': self.body_hash,
+            'body_hash': sha256str(self.body),
             'previous_hash': self.previous_hash,
             'height': self.height,
-            'time': self.time
+            'time': self.create_time
         }
 
     def get_herder_hash(self, nonce):
         return int(sha256str(sha256str(json.dumps(self.get_header().update({"nonce": nonce})))), 16)
+
+    def save_to_database(self):
+        BlockChain.create(
+            block_height=self.height,
+            current_hash=self.get_block_hash(),
+            previous_hash=self.previous_hash,
+            create_time=self.create_time,
+            header=json.dumps(self.get_header()),
+            body=self.body
+        )
+
+    def get_block_hash(self):
+        block = self.get_header()
+
+        block.update({
+            'body': self.body
+        })
+
+        return sha256str(json.dumps(block))

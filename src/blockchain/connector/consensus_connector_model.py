@@ -22,5 +22,9 @@ class ConsensusConnectorModel:
         pass
 
     @abstractmethod
-    def handle_customer_request(self):
+    def handle_training_request(self, data):
+        pass
+
+    @abstractmethod
+    def handle_upload_request(self, data):
         pass

@@ -17,14 +17,6 @@ class ConsensusModel:
         raise NotImplementedError()
 
     @abstractmethod
-    def verify_block(self, block):
-        """
-        decide how to verify the block
-        :param block:
-        """
-        raise NotImplementedError()
-
-    @abstractmethod
     def make_consensus(self, data):
         """
         this method is used to achieve consensus with other peers
