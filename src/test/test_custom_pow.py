@@ -1,12 +1,19 @@
 import os
+
+os.environ["DATABASE_URI"] = "/Users/chenjienan/PycharmProjects/PoML/src/test/testDatabase.db"
+
 import time
 import unittest
 
-os.environ["DATABASE_URI"] = "/Users/chenjienan/PycharmProjects/PoML/src/test/testDatabase.db"
+from src.blockchain.consesus.custom_pow import CustomPow, DEFAULT_DIFFICULTY
+from src.blockchain.peer.consensus_peer import ConsensusPeer
+
 from src.blockchain.persistence.database import BlockChain, init_database
 
 
-class MyTestCase(unittest.TestCase):
+class TestCustomPow(unittest.TestCase):
+    peer = ConsensusPeer()
+    consensus = CustomPow(peer)
 
     def test_calculate_difficulty_less_blocks(self):
         init_database()
@@ -18,6 +25,10 @@ class MyTestCase(unittest.TestCase):
             header='2333',
             body='this is the first block'
         )
+        self.assertEqual(self.consensus.calculate_difficulty(), DEFAULT_DIFFICULTY)
+
+    def test_mining(self):
+        self.consensus.make_block('233')
 
 
 if __name__ == '__main__':

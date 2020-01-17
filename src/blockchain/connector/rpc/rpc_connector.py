@@ -10,7 +10,7 @@ class RPCConnector(ConsensusConnectorModel):
         pass
 
     def handle_upload_request(self, data):
-        self.peer.handle_upload_request(data)
+        pass
 
     def __init__(self, peer):
         super().__init__(peer)

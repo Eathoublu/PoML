@@ -2,57 +2,55 @@ import json
 import random
 import time
 
+from src.blockchain.peer.consensus_peer import ConsensusPeer
 from src.blockchain.persistence.database import query_latest_block, BlockChain
 from src.error.blockchain import DatabaseException
 from .consesus_model import ConsensusModel
-from ..connector import consensus_connector_model
 from ...util.hash import sha256str
 
-DEFINE_DIFFICULTY = 1
-DEFINE_OUTPUT_PERIOD = 30
-DEFINE_PREVIEW_BLOCK = 100
-MAX_TARGET_VALUE = 0x00000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+DEFAULT_DIFFICULTY = 1
+DEFAULT_OUTPUT_PERIOD = 30
+DEFAULT_PREVIEW_BLOCK = 100
+MAX_TARGET_VALUE = 0x0FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 
 
 class CustomPow(ConsensusModel):
-    current_difficulty = DEFINE_DIFFICULTY
+    current_difficulty = DEFAULT_DIFFICULTY
 
-    def __init__(self, connector: consensus_connector_model):
-        super().__init__(connector)
+    def __init__(self, peer: ConsensusPeer):
+        super().__init__(peer)
 
     def handle_block(self, block):
         pass
 
     def make_consensus(self, data):
-        """
-        This method is used to make a consensus using pow algorithm.
-        This method will take for a long time.
-        :param data: the data which will be shared
-        :return: the block that shared successfully
-        """
+        block = self.make_block(data)
+        BlockChain.create(
+            block_height=block.height,
+            current_hash=block.get_block_hash(),
+            previous_hash=block.previous_hash,
+            create_time=block.create_time,
+            header=block.get_header(),
+            body=block.body
+        )
+
+    def make_block(self, data):
         while True:
-            block = self.make_block(data)
-            header_hash = block.get_herder_hash(random.random())
-            if header_hash < self.calculate_target_value():
+            body = sha256str(data)
+            block = query_latest_block()
+            if block is None:
+                raise DatabaseException()
+
+            block_height = block.block_height + 1
+            previous_hash = block.previous_hash
+            create_time = int(time.time() * 1000)
+
+            block = Block(previous_hash, body, block_height, create_time, random.random())
+            header_hash = block.get_header_hash()
+            target_value = self.calculate_target_value()
+
+            if header_hash < target_value:
                 return block
-
-    @staticmethod
-    def make_block(data):
-        """
-        Make a block with pow data structure.
-        :param data: the body
-        :return: the block
-        """
-        body = sha256str(data)
-        block = query_latest_block()
-        if block is None:
-            raise DatabaseException()
-
-        block_height = block.block_height + 1
-        previous_hash = block.previous_hash
-        create_time = int(time.time() * 1000)
-
-        return Block(previous_hash, body, block_height, create_time)
 
     def calculate_difficulty(self):
         """
@@ -60,17 +58,17 @@ class CustomPow(ConsensusModel):
 
         :return:
         """
-        query = BlockChain.select().order_by(BlockChain.block_height.desc()).limit(DEFINE_PREVIEW_BLOCK)
+        query = BlockChain.select().order_by(BlockChain.block_height.desc()).limit(DEFAULT_PREVIEW_BLOCK)
 
-        if len(query) < DEFINE_PREVIEW_BLOCK:
-            return DEFINE_DIFFICULTY
+        if len(query) < DEFAULT_PREVIEW_BLOCK:
+            return DEFAULT_DIFFICULTY
 
         new_block = query[0]
         old_block = query[len(query) - 1]
 
         period = new_block.create_time - old_block.create_time
 
-        self.current_difficulty = self.current_difficulty * (period / DEFINE_OUTPUT_PERIOD)
+        self.current_difficulty = self.current_difficulty * (period / DEFAULT_OUTPUT_PERIOD)
 
     def calculate_target_value(self):
         """
@@ -86,22 +84,26 @@ class Block:
     The data structure for pow algorithm
     """
 
-    def __init__(self, previous_hash, data, height, create_time):
+    def __init__(self, previous_hash, data, height, create_time, nonce):
         self.body = data
         self.previous_hash = previous_hash
         self.height = height
         self.create_time = create_time
+        self.nonce = nonce
 
     def get_header(self):
         return {
             'body_hash': sha256str(self.body),
             'previous_hash': self.previous_hash,
             'height': self.height,
-            'time': self.create_time
+            'create_time': self.create_time,
+            'nonce': self.nonce
         }
 
-    def get_herder_hash(self, nonce):
-        return int(sha256str(sha256str(json.dumps(self.get_header().update({"nonce": nonce})))), 16)
+    def get_header_hash(self):
+        header = self.get_header()
+
+        return int(sha256str(sha256str(json.dumps(header))), 16)
 
     def save_to_database(self):
         BlockChain.create(
@@ -113,11 +115,16 @@ class Block:
             body=self.body
         )
 
-    def get_block_hash(self):
+    def get_block(self):
         block = self.get_header()
 
         block.update({
             'body': self.body
         })
+
+        return block
+
+    def get_block_hash(self):
+        block = self.get_block()
 
         return sha256str(json.dumps(block))

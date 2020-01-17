@@ -9,8 +9,10 @@ class ConsensusConnectorModel:
     
     """
 
-    def __init__(self, peer: ConsensusPeer):
+    def __init__(self, peer: ConsensusPeer, peer_list: list):
         self.peer = peer
+        self.peer_list = peer_list
+        self.peer.connector = self
 
     @abstractmethod
     def broadcast(self, data, target: list):
