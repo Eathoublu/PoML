@@ -1,3 +1,5 @@
+import json
+
 from .consesus_model import ConsensusModel
 from ..connector import consensus_connector_model
 from ..persistence.data_model import BlockChain
@@ -46,6 +48,19 @@ class CustomPow(ConsensusModel):
 
 class Block:
 
-    def __init__(self, previous_hash, data):
-        self.body_hash = sha256str(sha256str(data))
+    def __init__(self, previous_hash, data, height, time):
+        self.body_hash = sha256str(data)
         self.previous_hash = previous_hash
+        self.height = height
+        self.time = time
+
+    def get_header(self):
+        return {
+            'body_hash': self.body_hash,
+            'previous_hash': self.previous_hash,
+            'height': self.height,
+            'time': self.time
+        }
+
+    def get_herder_hash(self):
+        sha256str(json.dumps(self.get_header()))
