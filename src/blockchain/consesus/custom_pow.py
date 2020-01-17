@@ -1,5 +1,8 @@
 import json
+import time
 
+from src.blockchain.persistence.database import query_latest_block
+from src.error.blockchain import DatabaseException
 from .consesus_model import ConsensusModel
 from ..connector import consensus_connector_model
 from ..persistence.data_model import BlockChain
@@ -27,7 +30,17 @@ class CustomPow(ConsensusModel):
         pass
 
     def make_block(self, data):
-        body = sha256str(sha256str(data))
+        body = sha256str(data)
+        block = query_latest_block()
+        if block is None:
+            raise DatabaseException()
+
+        block_height = block.block_height + 1
+        previous_hash = block.previous_hash
+        create_time = int(time.time() * 1000)
+
+        block = Block(previous_hash, data, block_height, create_time)
+        pass
 
     def calculate_difficulty(self):
         query = BlockChain.select().order_by(BlockChain.block_height.desc()).limit(DEFINE_PREVIEW_BLOCK)
@@ -62,5 +75,5 @@ class Block:
             'time': self.time
         }
 
-    def get_herder_hash(self):
-        sha256str(json.dumps(self.get_header()))
+    def get_herder_hash(self, nonce):
+        return int(sha256str(sha256str(json.dumps(self.get_header().update({"nonce": nonce})))), 16)
