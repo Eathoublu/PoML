@@ -27,9 +27,14 @@ class TestCustomPow(unittest.TestCase):
         )
         self.assertEqual(self.consensus.calculate_difficulty(), DEFAULT_DIFFICULTY)
 
-    def test_mining(self):
-        self.consensus.make_block('233')
+    def test_mine_one_block(self):
+        block = self.consensus.make_block('233')
+        block.save_to_database()
+        print(block)
+        self.assertIsNotNone(block)
 
+    def test_mine_more_blocks(self):
+        pass
 
 if __name__ == '__main__':
     unittest.main()

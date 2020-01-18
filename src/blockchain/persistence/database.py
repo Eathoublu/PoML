@@ -32,4 +32,4 @@ def clean_database():
 
 
 def query_latest_block():
-    return BlockChain.select().order_by(BlockChain.block_height).limit(1).get()
+    return BlockChain.select().order_by(BlockChain.block_height)[-1]

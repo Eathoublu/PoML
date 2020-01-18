@@ -11,7 +11,7 @@ from ...util.hash import sha256str
 DEFAULT_DIFFICULTY = 1
 DEFAULT_OUTPUT_PERIOD = 30
 DEFAULT_PREVIEW_BLOCK = 100
-MAX_TARGET_VALUE = 0x0FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+MAX_TARGET_VALUE = 0x000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 
 
 class CustomPow(ConsensusModel):
@@ -36,13 +36,13 @@ class CustomPow(ConsensusModel):
 
     def make_block(self, data):
         while True:
-            body = sha256str(data)
+            body = data
             block = query_latest_block()
             if block is None:
                 raise DatabaseException()
 
             block_height = block.block_height + 1
-            previous_hash = block.previous_hash
+            previous_hash = block.current_hash
             create_time = int(time.time() * 1000)
 
             block = Block(previous_hash, body, block_height, create_time, random.random())
@@ -128,3 +128,6 @@ class Block:
         block = self.get_block()
 
         return sha256str(json.dumps(block))
+
+    def __str__(self):
+        return json.dumps(self.get_block())
