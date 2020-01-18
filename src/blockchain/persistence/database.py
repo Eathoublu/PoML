@@ -31,5 +31,5 @@ def clean_database():
     db.execute_sql("delete from blockchain where true")
 
 
-def query_latest_block():
+def query_latest_block() -> BlockChain:
     return BlockChain.select().order_by(BlockChain.block_height)[-1]

@@ -1,13 +1,7 @@
 from abc import abstractmethod
 
-from src.blockchain.peer.consensus_peer import ConsensusPeer
-
 
 class ConsensusModel:
-
-    def __init__(self, peer: ConsensusPeer):
-        self.peer = peer
-        self.peer.consensus = self
 
     @abstractmethod
     def handle_block(self, block):

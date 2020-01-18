@@ -6,14 +6,12 @@ import time
 import unittest
 
 from src.blockchain.consesus.custom_pow import CustomPow, DEFAULT_DIFFICULTY
-from src.blockchain.peer.consensus_peer import ConsensusPeer
 
 from src.blockchain.persistence.database import BlockChain, init_database
 
 
 class TestCustomPow(unittest.TestCase):
-    peer = ConsensusPeer()
-    consensus = CustomPow(peer)
+    consensus = CustomPow()
 
     def test_calculate_difficulty_less_blocks(self):
         init_database()
@@ -34,7 +32,15 @@ class TestCustomPow(unittest.TestCase):
         self.assertIsNotNone(block)
 
     def test_mine_more_blocks(self):
-        pass
+        for i in range(1000):
+            begin_time = time.time()
+            print(f'正在挖{i}个块，当前目标值为{self.consensus.calculate_target_value()}')
+            block = self.consensus.make_block('233')
+            block.save_to_database()
+            finish_time = time.time()
+            print(f'挖到块了，耗时{finish_time - begin_time}')
+            print(block)
+
 
 if __name__ == '__main__':
     unittest.main()

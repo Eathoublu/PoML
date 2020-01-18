@@ -1,8 +1,5 @@
 class ConsensusPeer:
 
-    def __init__(self):
-        pass
-
     def broadcast(self, data):
         self.connector.broadcast(data, self.peer_list)
 
