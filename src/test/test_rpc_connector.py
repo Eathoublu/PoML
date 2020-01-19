@@ -1,4 +1,5 @@
 import os
+import time
 from concurrent.futures.thread import ThreadPoolExecutor
 
 os.environ["DATABASE_URI"] = "/Users/chenjienan/PycharmProjects/PoML/src/test/testDatabase.db"
@@ -33,10 +34,11 @@ class TestRpcConnector(unittest.TestCase):
         input()
 
     def test_make_consensus_mining(self):
-        client1 = RPCClient('127.0.0.1:1234')
-        client2 = RPCClient('127.0.0.1:1235')
-        client1.upload_batch("2333", "lalala")
-        client2.upload_batch("2333", "lalala")
+        for j in range(1000):
+            for i in [1234, 1235, 1236, 1237, 1238]:
+                client = RPCClient(f'127.0.0.1:{i}')
+                client.upload_batch("2333", f"lalala{j}")
+            time.sleep(30)
         input()
 
     def test_exist(self):

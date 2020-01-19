@@ -62,12 +62,14 @@ class CustomPow(ConsensusModel):
             kwargs['connector'].broadcast_proposal(block.__str__())
 
     def make_block(self, data):
-        print("begin to make block")
+        start_time = time.time()
+        print("begin to make block, now is", start_time)
         body_hash = sha256str(data)
         self.jobs[body_hash] = True
+
         while True:
             if body_hash not in self.jobs.keys():
-                print('fuck, i give up!')
+                print('fuck, i give up! used time:', time.time() - start_time)
                 return None
 
             body = data
@@ -85,7 +87,7 @@ class CustomPow(ConsensusModel):
             header_hash = block.get_header_hash()
 
             if header_hash < target_value:
-                print("make block successfully", block)
+                print("make block successfully, used time:", time.time() - start_time, block)
                 return block
 
     @staticmethod

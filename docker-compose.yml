@@ -15,3 +15,13 @@ services:
     image: poml
     ports:
       - "1236:2333"
+
+  peer4:
+    image: poml
+    ports:
+      - "1237:2333"
+
+  peer5:
+    image: poml
+    ports:
+      - "1238:2333"
