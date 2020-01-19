@@ -4,11 +4,16 @@ service Consensus {
     rpc Upload_batch (Batch) returns (Result);
     rpc Train (Training_request) returns (Result);
     rpc Fetch_training_result (Fetch_training_result_request) returns (Result);
+    rpc Make_consensus (Proposal) returns (Result);
 }
 
 message Batch {
     string batch_id = 1;
     string data = 2;
+}
+
+message Proposal {
+    string data = 1;
 }
 
 message Training_request {

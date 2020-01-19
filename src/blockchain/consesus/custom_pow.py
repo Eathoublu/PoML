@@ -3,7 +3,7 @@ import random
 import time
 
 from src.blockchain.persistence.database import query_latest_block, BlockChain
-from src.error.blockchain import DatabaseException
+from src.error.blockchain import DatabaseException, ValidationException
 from .consesus_model import ConsensusModel
 from ...util.hash import sha256str
 
@@ -25,29 +25,26 @@ class CustomPow(ConsensusModel):
             nonce=block_json['nonce'],
             target_value=block_json['target_value']
         )
+        if self.validate_block(block):
+            block.save_to_database()
+        else:
+            raise ValidationException()
 
-        block.save_to_database()
-
-    @staticmethod
-    def validate_block(block) -> bool:
+    def validate_block(self, block) -> bool:
         latest_block = query_latest_block()
-        if latest_block.block_height + 1 != block.block_height:
+        if latest_block.block_height + 1 != block.height:
             return False
         elif latest_block.current_hash != block.previous_hash:
             return False
         elif sha256str(latest_block.body) != block.get_header()['body_hash']:
             return False
+        elif block.get_header_hash() >= self.calculate_target_value():
+            return False
+        return True
 
-    def make_consensus(self, data):
+    def make_consensus(self, data, *args, **kwargs):
         block = self.make_block(data)
-        BlockChain.create(
-            block_height=block.height,
-            current_hash=block.get_block_hash(),
-            previous_hash=block.previous_hash,
-            create_time=block.create_time,
-            header=block.get_header(),
-            body=block.body
-        )
+        kwargs['connector'].broadcast_proposal(block)
 
     def make_block(self, data):
         while True:
@@ -67,7 +64,8 @@ class CustomPow(ConsensusModel):
             if header_hash < target_value:
                 return block
 
-    def calculate_difficulty(self):
+    @staticmethod
+    def calculate_difficulty():
         """
         Calculate the difficulty of mining.
 

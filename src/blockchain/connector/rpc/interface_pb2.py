@@ -9,7 +9,6 @@ from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
 from google.protobuf import symbol_database as _symbol_database
-
 # @@protoc_insertion_point(imports)
 
 _sym_db = _symbol_database.Default()
@@ -20,8 +19,10 @@ DESCRIPTOR = _descriptor.FileDescriptor(
     syntax='proto3',
     serialized_options=None,
     serialized_pb=_b(
-        '\n\x0finterface.proto\"\'\n\x05\x42\x61tch\x12\x10\n\x08\x62\x61tch_id\x18\x01 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x02 \x01(\t\"1\n\x10Training_request\x12\x0c\n\x04\x66uel\x18\x01 \x03(\t\x12\x0f\n\x07\x66urnace\x18\x02 \x03(\t\"3\n\x1d\x46\x65tch_training_result_request\x12\x12\n\ntrainingId\x18\x01 \x01(\t\"\x85\x01\n\x06Result\x12 \n\x04\x63ode\x18\x01 \x01(\x0e\x32\x12.Result.StatusCode\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t\"D\n\nStatusCode\x12\x0b\n\x07SUCCESS\x10\x00\x12\x13\n\x0fINVALID_REQUEST\x10\x01\x12\x14\n\x10\x43ONSENSUS_FAILED\x10\x02\x32\x93\x01\n\tConsensus\x12\x1f\n\x0cUpload_batch\x12\x06.Batch\x1a\x07.Result\x12#\n\x05Train\x12\x11.Training_request\x1a\x07.Result\x12@\n\x15\x46\x65tch_training_result\x12\x1e.Fetch_training_result_request\x1a\x07.Resultb\x06proto3')
+        '\n\x0finterface.proto\"\'\n\x05\x42\x61tch\x12\x10\n\x08\x62\x61tch_id\x18\x01 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x02 \x01(\t\"\x18\n\x08Proposal\x12\x0c\n\x04\x64\x61ta\x18\x01 \x01(\t\"1\n\x10Training_request\x12\x0c\n\x04\x66uel\x18\x01 \x03(\t\x12\x0f\n\x07\x66urnace\x18\x02 \x03(\t\"3\n\x1d\x46\x65tch_training_result_request\x12\x12\n\ntrainingId\x18\x01 \x01(\t\"\x85\x01\n\x06Result\x12 \n\x04\x63ode\x18\x01 \x01(\x0e\x32\x12.Result.StatusCode\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t\"D\n\nStatusCode\x12\x0b\n\x07SUCCESS\x10\x00\x12\x13\n\x0fINVALID_REQUEST\x10\x01\x12\x14\n\x10\x43ONSENSUS_FAILED\x10\x02\x32\xb9\x01\n\tConsensus\x12\x1f\n\x0cUpload_batch\x12\x06.Batch\x1a\x07.Result\x12#\n\x05Train\x12\x11.Training_request\x1a\x07.Result\x12@\n\x15\x46\x65tch_training_result\x12\x1e.Fetch_training_result_request\x1a\x07.Result\x12$\n\x0eMake_consensus\x12\t.Proposal\x1a\x07.Resultb\x06proto3')
 )
+
+
 
 _RESULT_STATUSCODE = _descriptor.EnumDescriptor(
     name='StatusCode',
@@ -44,10 +45,11 @@ _RESULT_STATUSCODE = _descriptor.EnumDescriptor(
     ],
     containing_type=None,
     serialized_options=None,
-    serialized_start=230,
-    serialized_end=298,
+    serialized_start=256,
+    serialized_end=324,
 )
 _sym_db.RegisterEnumDescriptor(_RESULT_STATUSCODE)
+
 
 _BATCH = _descriptor.Descriptor(
     name='Batch',
@@ -86,6 +88,37 @@ _BATCH = _descriptor.Descriptor(
     serialized_end=58,
 )
 
+_PROPOSAL = _descriptor.Descriptor(
+    name='Proposal',
+    full_name='Proposal',
+    filename=None,
+    file=DESCRIPTOR,
+    containing_type=None,
+    fields=[
+        _descriptor.FieldDescriptor(
+            name='data', full_name='Proposal.data', index=0,
+            number=1, type=9, cpp_type=9, label=1,
+            has_default_value=False, default_value=_b("").decode('utf-8'),
+            message_type=None, enum_type=None, containing_type=None,
+            is_extension=False, extension_scope=None,
+            serialized_options=None, file=DESCRIPTOR),
+    ],
+    extensions=[
+    ],
+    nested_types=[],
+    enum_types=[
+    ],
+    serialized_options=None,
+    is_extendable=False,
+    syntax='proto3',
+    extension_ranges=[],
+    oneofs=[
+    ],
+    serialized_start=60,
+    serialized_end=84,
+)
+
+
 _TRAINING_REQUEST = _descriptor.Descriptor(
     name='Training_request',
     full_name='Training_request',
@@ -119,9 +152,10 @@ _TRAINING_REQUEST = _descriptor.Descriptor(
     extension_ranges=[],
     oneofs=[
     ],
-    serialized_start=60,
-    serialized_end=109,
+    serialized_start=86,
+    serialized_end=135,
 )
+
 
 _FETCH_TRAINING_RESULT_REQUEST = _descriptor.Descriptor(
     name='Fetch_training_result_request',
@@ -149,9 +183,10 @@ _FETCH_TRAINING_RESULT_REQUEST = _descriptor.Descriptor(
     extension_ranges=[],
     oneofs=[
     ],
-    serialized_start=111,
-    serialized_end=162,
+    serialized_start=137,
+    serialized_end=188,
 )
+
 
 _RESULT = _descriptor.Descriptor(
     name='Result',
@@ -187,13 +222,14 @@ _RESULT = _descriptor.Descriptor(
     extension_ranges=[],
     oneofs=[
     ],
-    serialized_start=165,
-    serialized_end=298,
+    serialized_start=191,
+    serialized_end=324,
 )
 
 _RESULT.fields_by_name['code'].enum_type = _RESULT_STATUSCODE
 _RESULT_STATUSCODE.containing_type = _RESULT
 DESCRIPTOR.message_types_by_name['Batch'] = _BATCH
+DESCRIPTOR.message_types_by_name['Proposal'] = _PROPOSAL
 DESCRIPTOR.message_types_by_name['Training_request'] = _TRAINING_REQUEST
 DESCRIPTOR.message_types_by_name['Fetch_training_result_request'] = _FETCH_TRAINING_RESULT_REQUEST
 DESCRIPTOR.message_types_by_name['Result'] = _RESULT
@@ -205,6 +241,13 @@ Batch = _reflection.GeneratedProtocolMessageType('Batch', (_message.Message,), {
     # @@protoc_insertion_point(class_scope:Batch)
 })
 _sym_db.RegisterMessage(Batch)
+
+Proposal = _reflection.GeneratedProtocolMessageType('Proposal', (_message.Message,), {
+    'DESCRIPTOR': _PROPOSAL,
+    '__module__': 'interface_pb2'
+    # @@protoc_insertion_point(class_scope:Proposal)
+})
+_sym_db.RegisterMessage(Proposal)
 
 Training_request = _reflection.GeneratedProtocolMessageType('Training_request', (_message.Message,), {
     'DESCRIPTOR': _TRAINING_REQUEST,
@@ -234,8 +277,8 @@ _CONSENSUS = _descriptor.ServiceDescriptor(
     file=DESCRIPTOR,
     index=0,
     serialized_options=None,
-    serialized_start=301,
-    serialized_end=448,
+    serialized_start=327,
+    serialized_end=512,
     methods=[
         _descriptor.MethodDescriptor(
             name='Upload_batch',
@@ -261,6 +304,15 @@ _CONSENSUS = _descriptor.ServiceDescriptor(
             index=2,
             containing_service=None,
             input_type=_FETCH_TRAINING_RESULT_REQUEST,
+            output_type=_RESULT,
+            serialized_options=None,
+        ),
+        _descriptor.MethodDescriptor(
+            name='Make_consensus',
+            full_name='Consensus.Make_consensus',
+            index=3,
+            containing_service=None,
+            input_type=_PROPOSAL,
             output_type=_RESULT,
             serialized_options=None,
         ),

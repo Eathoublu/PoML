@@ -12,7 +12,7 @@ class ConsensusModel:
         raise NotImplementedError()
 
     @abstractmethod
-    def make_consensus(self, data):
+    def make_consensus(self, data, *args, **kwargs):
         """
         this method is used to achieve consensus with other peers
         for the sack of writing data into blockchain
