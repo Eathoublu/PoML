@@ -1,0 +1,17 @@
+version: "3"
+services:
+
+  peer1:
+    image: poml
+    ports:
+      - "1234:2333"
+
+  peer2:
+    image: poml
+    ports:
+      - "1235:2333"
+
+  peer3:
+    image: poml
+    ports:
+      - "1236:2333"

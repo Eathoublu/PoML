@@ -5,9 +5,9 @@ os.environ["DATABASE_URI"] = "/Users/chenjienan/PycharmProjects/PoML/src/test/te
 
 import unittest
 
-from src.blockchain.connector.rpc import RPCConnector
-from src.blockchain.connector.rpc.rpc_client import RPCClient
-from src.blockchain.consesus.custom_pow import CustomPow
+from ..blockchain.connector.rpc import RPCConnector
+from ..blockchain.connector.rpc.rpc_client import RPCClient
+from ..blockchain.consesus.custom_pow import CustomPow
 
 
 class TestRpcConnector(unittest.TestCase):
@@ -33,11 +33,16 @@ class TestRpcConnector(unittest.TestCase):
         input()
 
     def test_make_consensus_mining(self):
-        client1 = RPCClient('127.0.0.1:2333')
-        client2 = RPCClient('127.0.0.1:2334')
+        client1 = RPCClient('127.0.0.1:1234')
+        client2 = RPCClient('127.0.0.1:1235')
         client1.upload_batch("2333", "lalala")
         client2.upload_batch("2333", "lalala")
         input()
+
+    def test_exist(self):
+        client1 = RPCClient('127.0.0.1:1234')
+        client1.send_proposal("2333")
+
 
 if __name__ == '__main__':
     unittest.main()

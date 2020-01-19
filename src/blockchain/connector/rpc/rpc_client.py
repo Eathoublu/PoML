@@ -1,7 +1,7 @@
 import grpc
 
-from src.blockchain.connector.rpc.interface_pb2 import Proposal, Batch
 from .interface_pb2_grpc import ConsensusStub
+from ....blockchain.connector.rpc.interface_pb2 import Proposal, Batch
 
 
 class RPCClient:

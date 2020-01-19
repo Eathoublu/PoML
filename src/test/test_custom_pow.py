@@ -1,6 +1,6 @@
 import os
 
-os.environ["DATABASE_URI"] = "/Users/chenjienan/PycharmProjects/PoML/src/test/testDatabase.db"
+os.environ["DATABASE_URI"] = "/Users/chenjienan/PycharmProjects/PoML/src/database.db"
 
 import time
 import unittest

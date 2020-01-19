@@ -4,8 +4,8 @@ import time
 
 from src.blockchain.persistence.database import query_latest_block, BlockChain
 from src.error.blockchain import DatabaseException, ValidationException
+from src.util.hash import sha256str
 from .consesus_model import ConsensusModel
-from ...util.hash import sha256str
 
 DEFAULT_DIFFICULTY = 1
 DEFAULT_OUTPUT_TIME_PERIOD = 30 * 1000
@@ -23,7 +23,7 @@ class CustomPow(ConsensusModel):
     jobs = {}
 
     def handle_block(self, raw_block):
-        # print("handle block")
+        print("handle block")
         block_json = json.loads(raw_block)
         block = Block(
             previous_hash=block_json['previous_hash'],
@@ -34,7 +34,7 @@ class CustomPow(ConsensusModel):
             target_value=block_json['target_value']
         )
         if self.validate_block(block):
-            # print("passed")
+            print("passed")
             body_hash = sha256str(block.body)
             if body_hash in self.jobs.keys():
                 del self.jobs[body_hash]
@@ -62,16 +62,18 @@ class CustomPow(ConsensusModel):
             kwargs['connector'].broadcast_proposal(block.__str__())
 
     def make_block(self, data):
-        # print("begin to make block")
+        print("begin to make block")
         body_hash = sha256str(data)
         self.jobs[body_hash] = True
         while True:
             if body_hash not in self.jobs.keys():
-                # print('fuck, i give up!')
+                print('fuck, i give up!')
                 return None
+
             body = data
             block = query_latest_block()
             if block is None:
+                print("can not find block")
                 raise DatabaseException()
 
             block_height = block.block_height + 1

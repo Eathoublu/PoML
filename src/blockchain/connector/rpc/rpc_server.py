@@ -4,9 +4,9 @@ from concurrent import futures
 
 import grpc
 
-from src.blockchain.connector.rpc.interface_pb2 import Result
 from .interface_pb2_grpc import ConsensusServicer, add_ConsensusServicer_to_server
 from ..consensus_connector_model import ConsensusConnectorModel
+from ....blockchain.connector.rpc.interface_pb2 import Result
 
 
 class RPCServer(ConsensusServicer):
@@ -43,5 +43,7 @@ class RPCServer(ConsensusServicer):
 
     def serve(self):
         add_ConsensusServicer_to_server(self, self.server)
-        self.server.add_insecure_port("0.0.0.0:" + os.environ.get("port"))
+        port = os.environ.get("port")
+        self.server.add_insecure_port("0.0.0.0:" + port)
+        print("server on port:", port)
         self.server.start()

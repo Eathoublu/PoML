@@ -2,8 +2,10 @@ import os
 
 from peewee import *
 
-db = SqliteDatabase(os.environ.get("DATABASE_URI"))
-
+URI = os.environ.get("DATABASE_URI")
+db = SqliteDatabase(URI)
+db.execute_sql("select 1 + 1")
+print("database connected")
 
 class BaseModel(Model):
     class Meta:
