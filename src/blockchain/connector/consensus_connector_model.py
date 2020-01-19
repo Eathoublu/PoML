@@ -10,7 +10,7 @@ class ConsensusConnectorModel:
     
     """
 
-    def __init__(self, consensus: ConsensusModel):
+    def __init__(self, consensus: ConsensusModel, *args, **kwargs):
         self.peers = str(os.environ['peers']).split(";")
         self.consensus = consensus
 

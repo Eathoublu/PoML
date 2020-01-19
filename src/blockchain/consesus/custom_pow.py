@@ -14,8 +14,16 @@ MAX_TARGET_VALUE = 0x000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 
 
 class CustomPow(ConsensusModel):
+    """
+    This is the custom consensus that based on POW with some differences.
+
+    1. The difficulty mechanism has changed.
+    2. Don't care about malicious peers, which means the validation of blocks has been simplified.
+    """
+    jobs = {}
 
     def handle_block(self, raw_block):
+        # print("handle block")
         block_json = json.loads(raw_block)
         block = Block(
             previous_hash=block_json['previous_hash'],
@@ -26,8 +34,14 @@ class CustomPow(ConsensusModel):
             target_value=block_json['target_value']
         )
         if self.validate_block(block):
+            # print("passed")
+            body_hash = sha256str(block.body)
+            if body_hash in self.jobs.keys():
+                del self.jobs[body_hash]
+                print("deleted the job")
             block.save_to_database()
         else:
+            print("failed")
             raise ValidationException()
 
     def validate_block(self, block) -> bool:
@@ -36,7 +50,7 @@ class CustomPow(ConsensusModel):
             return False
         elif latest_block.current_hash != block.previous_hash:
             return False
-        elif sha256str(latest_block.body) != block.get_header()['body_hash']:
+        elif sha256str(block.body) != block.get_header()['body_hash']:
             return False
         elif block.get_header_hash() >= self.calculate_target_value():
             return False
@@ -44,10 +58,17 @@ class CustomPow(ConsensusModel):
 
     def make_consensus(self, data, *args, **kwargs):
         block = self.make_block(data)
-        kwargs['connector'].broadcast_proposal(block)
+        if block is not None:
+            kwargs['connector'].broadcast_proposal(block.__str__())
 
     def make_block(self, data):
+        # print("begin to make block")
+        body_hash = sha256str(data)
+        self.jobs[body_hash] = True
         while True:
+            if body_hash not in self.jobs.keys():
+                # print('fuck, i give up!')
+                return None
             body = data
             block = query_latest_block()
             if block is None:
@@ -62,6 +83,7 @@ class CustomPow(ConsensusModel):
             header_hash = block.get_header_hash()
 
             if header_hash < target_value:
+                print("make block successfully", block)
                 return block
 
     @staticmethod

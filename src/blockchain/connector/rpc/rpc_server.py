@@ -16,10 +16,15 @@ class RPCServer(ConsensusServicer):
         self.connector = connector
 
     def Upload_batch(self, request, context):
-        self.connector.handle_upload_request(json.dumps({
-            'batch_id': request.batch_id,
-            'data': request.data
-        }))
+        print("receive upload request")
+        try:
+            self.connector.handle_upload_request(json.dumps({
+                'batch_id': request.batch_id,
+                'data': request.data
+            }))
+        except Exception:
+            return Result(code=2, description="boom!")
+        return Result(code=0, description="ok!")
 
     def Train(self, request, context):
         pass

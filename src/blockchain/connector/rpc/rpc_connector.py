@@ -8,25 +8,26 @@ from ..consensus_connector_model import ConsensusConnectorModel
 
 class RPCConnector(ConsensusConnectorModel):
 
-    def __init__(self, consensus: ConsensusModel):
+    def __init__(self, consensus: ConsensusModel, *args, **kwargs):
         super().__init__(consensus)
         self.rpc_server = RPCServer(self)
         self.rpc_server.serve()
+        self.executors = ThreadPoolExecutor(max_workers=10)
 
     def handle_training_request(self, data):
         pass
 
-    def broadcast_proposal(self, block):
-        executors = ThreadPoolExecutor(max_workers=2)
+    def broadcast_proposal(self, data):
+        print("begin to broadcast")
 
         for peer in self.peers:
             client = RPCClient(peer)
-            executors.submit(client.send_proposal, block)
+            client.send_proposal(data)
 
-    def handle_upload_request(self, data):
-        self.consensus.make_consensus(data=data, connector=self)
+    def handle_upload_request(self, data: str):
+        print("handling upload request")
+        self.executors.submit(self.consensus.make_consensus, data=data, connector=self)
 
     def handle_consensus_data(self, data):
-        print(data)
-
+        print('received proposal')
         self.consensus.handle_block(data)
