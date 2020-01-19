@@ -1,5 +1,7 @@
 import json
+import queue
 import random
+import threading
 import time
 
 from src.blockchain.persistence.database import query_latest_block, BlockChain
@@ -21,6 +23,17 @@ class CustomPow(ConsensusModel):
     2. Don't care about malicious peers, which means the validation of blocks has been simplified.
     """
     jobs = {}
+    q = queue.Queue()
+
+    def __init__(self):
+        threading.Thread(target=self.mine).start()
+
+    def mine(self):
+        while True:
+            job = self.q.get()
+            block = self.make_block(job['data'])
+            if block is not None:
+                job['connector'].broadcast_proposal(block.__str__())
 
     def handle_block(self, raw_block):
         print("handle block")
@@ -57,9 +70,10 @@ class CustomPow(ConsensusModel):
         return True
 
     def make_consensus(self, data, *args, **kwargs):
-        block = self.make_block(data)
-        if block is not None:
-            kwargs['connector'].broadcast_proposal(block.__str__())
+        self.q.put({
+            'data': data,
+            'connector': kwargs['connector']
+        })
 
     def make_block(self, data):
         start_time = time.time()

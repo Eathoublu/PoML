@@ -30,7 +30,7 @@ class TestRpcConnector(unittest.TestCase):
         input()
 
     def test_make_consensus_valid_input(self):
-        self.connector1.handle_consensus_data()
+        self.connector1.handle_consensus_data('233')
         input()
 
     def test_make_consensus_mining(self):
@@ -41,9 +41,9 @@ class TestRpcConnector(unittest.TestCase):
             time.sleep(30)
         input()
 
-    def test_exist(self):
-        client1 = RPCClient('127.0.0.1:1234')
-        client1.send_proposal("2333")
+    def test_upload(self):
+        client1 = RPCClient('127.0.0.1:2333')
+        client1.upload_batch("233", "2333")
 
 
 if __name__ == '__main__':
