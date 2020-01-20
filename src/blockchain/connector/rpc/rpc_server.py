@@ -16,7 +16,7 @@ class RPCServer(ConsensusServicer):
         self.connector = connector
 
     def Upload_batch(self, request, context):
-        print("receive upload request")
+        # print("receive upload request")
         try:
             self.connector.handle_upload_request(json.dumps({
                 'batch_id': request.batch_id,

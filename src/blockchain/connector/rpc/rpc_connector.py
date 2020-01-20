@@ -18,16 +18,16 @@ class RPCConnector(ConsensusConnectorModel):
         pass
 
     def broadcast_proposal(self, data):
-        print("begin to broadcast")
+        # print("begin to broadcast")
 
         for peer in self.peers:
             client = RPCClient(peer)
             client.send_proposal(data)
 
     def handle_upload_request(self, data: str):
-        print("handling upload request")
+        # print("handling upload request")
         self.executors.submit(self.consensus.make_consensus, data=data, connector=self)
 
     def handle_consensus_data(self, data):
-        print('received proposal')
+        # print('received proposal')
         self.consensus.handle_block(data)

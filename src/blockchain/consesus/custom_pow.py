@@ -10,7 +10,7 @@ from src.util.hash import sha256str
 from .consesus_model import ConsensusModel
 
 DEFAULT_DIFFICULTY = 1
-DEFAULT_OUTPUT_TIME_PERIOD = 30 * 1000
+DEFAULT_OUTPUT_TIME_PERIOD = 10 * 1000
 DEFAULT_PREVIEW_BLOCK = 10
 MAX_TARGET_VALUE = 0x000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 
@@ -34,6 +34,7 @@ class CustomPow(ConsensusModel):
             block = self.make_block(job['data'])
             if block is not None:
                 job['connector'].broadcast_proposal(block.__str__())
+            time.sleep(1)
 
     def handle_block(self, raw_block):
         print("handle block")
@@ -123,12 +124,7 @@ class CustomPow(ConsensusModel):
         period = new_block.create_time - old_block.create_time
         difficulty = MAX_TARGET_VALUE / json.loads(new_block.header)['target_value']
 
-        if period / DEFAULT_OUTPUT_TIME_PERIOD > 1:
-            return difficulty * 1.1
-        elif period / DEFAULT_OUTPUT_TIME_PERIOD < 1:
-            return difficulty * 0.9
-        else:
-            return difficulty
+        return difficulty * ((DEFAULT_OUTPUT_TIME_PERIOD * DEFAULT_PREVIEW_BLOCK) / period)
 
     def calculate_target_value(self):
         """

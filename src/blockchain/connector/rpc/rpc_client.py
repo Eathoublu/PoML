@@ -11,7 +11,7 @@ class RPCClient:
         self.stub = ConsensusStub(channel)
 
     def send_proposal(self, block: str):
-        print("sending proposal")
+        # print("sending proposal")
         self.stub.Make_consensus(Proposal(data=block))
 
     def upload_batch(self, batch_id, data):
